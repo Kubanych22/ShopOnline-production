@@ -150,6 +150,7 @@ const createTimer = deadline => {
 
 
 const menuBtn = document.querySelector('.navigation__menu-btn');
+const menu = document.querySelector('.menu');
 (0,_createBannerWithTimer_js__WEBPACK_IMPORTED_MODULE_0__/* .createBannerWithTimer */ .o)();
 const dataTimerDeadline = document.querySelector('.timer');
 const deadline = dataTimerDeadline.dataset.timerDeadline.trim();
@@ -157,8 +158,22 @@ const deadline = dataTimerDeadline.dataset.timerDeadline.trim();
 menuBtn.addEventListener('click', evt => {
   evt.preventDefault();
   menuBtn.classList.toggle('close-btn');
-  const menu = document.querySelector('.menu');
   menu.classList.toggle('open');
+  const menuListWrap = menu.querySelector('.menu__wrap');
+  const menuList = menuListWrap.children;
+  for (const item of menuList) {
+    const innerItem = [...item.querySelectorAll('.inner__list')];
+    for (const elem of innerItem) {
+      const parent = elem.parentElement;
+      parent.addEventListener('click', evt => {
+        const target = evt.target;
+        const ul = target.querySelector('.inner__list');
+        if (ul) {
+          ul.classList.toggle('expand');
+        }
+      });
+    }
+  }
 });
 
 /***/ }),

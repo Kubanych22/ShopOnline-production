@@ -2,32 +2,95 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 498:
+/***/ 631:
 /***/ ((__webpack_module__, __unused_webpack___webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.a(__webpack_module__, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
-/* harmony import */ var _render_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(228);
-/* harmony import */ var _showArticle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(441);
+/* harmony import */ var _render_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(19);
+/* harmony import */ var _showArticle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(50);
 
 
 const menuBtn = document.querySelector('.navigation__menu-btn');
+const menu = document.querySelector('.menu');
 menuBtn.addEventListener('click', evt => {
   evt.preventDefault();
   menuBtn.classList.toggle('close-btn');
-  const menu = document.querySelector('.menu');
   menu.classList.toggle('open');
+  const menuListWrap = menu.querySelector('.menu__wrap');
+  const menuList = menuListWrap.children;
+  for (const item of menuList) {
+    const innerItem = [...item.querySelectorAll('.inner__list')];
+    for (const elem of innerItem) {
+      const parent = elem.parentElement;
+      parent.addEventListener('click', evt => {
+        const target = evt.target;
+        const ul = target.querySelector('.inner__list');
+        if (ul) {
+          ul.classList.toggle('expand');
+        }
+      });
+    }
+  }
 });
 const renderBlog = async () => {
   await (0,_render_js__WEBPACK_IMPORTED_MODULE_0__/* .renderPostsPage */ .d3)();
   (0,_showArticle_js__WEBPACK_IMPORTED_MODULE_1__/* .showArticle */ .k)();
 };
 await renderBlog();
+const breadcrumbs = () => {
+  const nav = document.querySelector('.navigation');
+  const breadcrumbsList = document.createElement('ul');
+  breadcrumbsList.classList.add('breadcrumbs');
+  breadcrumbsList.id = 'breadcrumbs';
+  let breadcrumbsItem;
+  breadcrumbsItem = document.createElement('li');
+  breadcrumbsItem.classList.add('breadcrumbs__item');
+  let breadcrumbsLink = document.createElement('a');
+  breadcrumbsLink.classList.add('breadcrumbs__link');
+  breadcrumbsLink.href = 'index.html';
+  breadcrumbsLink.textContent = 'Главная';
+  breadcrumbsItem.append(breadcrumbsLink);
+  breadcrumbsList.append(breadcrumbsItem);
+  nav.append(breadcrumbsList);
+  const breadcrumbs = document.querySelector('.breadcrumbs');
+  const menuListWrap = menu.querySelector('.menu__wrap');
+  const menuList = [...menuListWrap.children];
+  for (const item of menuList) {
+    const links = [...item.querySelectorAll('a')];
+    const url = links.map(link => {
+      return link.getAttribute('href');
+    });
+    let href = [];
+    for (let i = 0; i < url.length; i++) {
+      if (url[i] === '#') {
+        continue;
+      }
+      href.push(url[i]);
+    }
+    const paths = location.href.split('/').slice(3);
+    const path = paths[0];
+    if (href.toString().includes(path.toString())) {
+      const menuItemTitle = item.querySelector('h3');
+      breadcrumbsItem = document.createElement('li');
+      breadcrumbsItem.classList.add('breadcrumbs__item');
+      breadcrumbsItem.textContent = menuItemTitle.textContent;
+      breadcrumbs.append(breadcrumbsItem);
+      const currentLink = item.querySelector(`a[href*="${path}"]`);
+      breadcrumbsItem = document.createElement('li');
+      breadcrumbsItem.classList.add('breadcrumbs__item');
+      breadcrumbsItem.textContent = currentLink.textContent;
+      breadcrumbs.append(breadcrumbsItem);
+      break;
+    }
+  }
+};
+breadcrumbs();
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } }, 1);
 
 /***/ }),
 
-/***/ 153:
+/***/ 328:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
@@ -140,7 +203,7 @@ const createPage = (articlesList, btnNum) => {
 
 /***/ }),
 
-/***/ 228:
+/***/ 19:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 
@@ -152,9 +215,9 @@ __webpack_require__.d(__webpack_exports__, {
 // UNUSED EXPORTS: currentPage, getArticles
 
 // EXTERNAL MODULE: ./src/js/blog/createPage.js
-var createPage = __webpack_require__(153);
+var createPage = __webpack_require__(328);
 // EXTERNAL MODULE: ./src/js/blog/showArticle.js
-var showArticle = __webpack_require__(441);
+var showArticle = __webpack_require__(50);
 ;// CONCATENATED MODULE: ./src/js/index/preload.js
 const preload = {
   circle: `<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 180 180" fill="none">
@@ -251,7 +314,7 @@ const renderPostsPage = async () => {
 
 /***/ }),
 
-/***/ 441:
+/***/ 50:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
@@ -281,9 +344,14 @@ const createArticlePage = post => {
       userName = user[0].name;
     }
     const breadcrumbs = document.querySelector('.breadcrumbs');
-    const link = breadcrumbs.children[1].querySelector('.breadcrumbs__link');
+    let li = breadcrumbs.children[2];
+    const link = document.createElement('a');
+    link.classList.add('breadcrumbs__link');
     link.href = 'blog.html';
-    const li = document.createElement('li');
+    link.textContent = li.textContent;
+    li.textContent = '';
+    li.append(link);
+    li = document.createElement('li');
     li.classList.add('breadcrumbs__item');
     li.textContent = `${docTitle}`;
     breadcrumbs.append(li);
@@ -453,10 +521,10 @@ const showArticle = () => {
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module used 'module' so it can't be inlined
-/******/ 	__webpack_require__(498);
-/******/ 	__webpack_require__(153);
-/******/ 	__webpack_require__(228);
-/******/ 	var __webpack_exports__ = __webpack_require__(441);
+/******/ 	__webpack_require__(631);
+/******/ 	__webpack_require__(328);
+/******/ 	__webpack_require__(19);
+/******/ 	var __webpack_exports__ = __webpack_require__(50);
 /******/ 	
 /******/ })()
 ;
